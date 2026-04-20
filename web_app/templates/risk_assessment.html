@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Assessment - InsurGuard AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            padding: 60px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 10px;
+        }
+
+        .content-section {
+            padding: 60px 0;
+        }
+
+        .form-container {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.05) 0%, rgba(0, 255, 136, 0.05) 100%);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            color: white;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(100, 200, 255, 0.1);
+            border-color: #64c8ff;
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.2);
+            color: white;
+        }
+
+        .form-control::selection {
+            background: rgba(100, 200, 255, 0.3);
+        }
+
+        .input-group-text {
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            color: #0a0e27;
+            border: none;
+            padding: 12px 40px;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px rgba(100, 200, 255, 0.4);
+            color: #0a0e27;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Security Matrix Animation */
+        .security-matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+
+        .security-matrix.active {
+            display: block;
+        }
+
+        .matrix-cell {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(100, 200, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64c8ff;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .matrix-cell.active {
+            background: rgba(100, 200, 255, 0.3);
+            box-shadow: 0 0 10px rgba(100, 200, 255, 0.6);
+            animation: pulse-cell 0.5s ease;
+        }
+
+        @keyframes pulse-cell {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .encryption-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 39, 0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+
+        .encryption-overlay.active {
+            display: flex;
+        }
+
+        .encryption-status {
+            text-align: center;
+            color: white;
+        }
+
+        .spinner-pulse {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(100, 200, 255, 0.3);
+            border-top: 3px solid #64c8ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hash-display {
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #00ff88;
+            margin-top: 15px;
+            word-break: break-all;
+        }
+
+        /* Results Section */
+        .results-container {
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+            animation: slideInUp 0.5s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .result-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #64c8ff;
+        }
+
+        .risk-level-low {
+            color: #00ff88;
+        }
+
+        .risk-level-medium {
+            color: #ffaa00;
+        }
+
+        .risk-level-high {
+            color: #ff6b6b;
+        }
+
+        .risk-level-critical {
+            color: #ff1744;
+        }
+
+        .before-after-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .before-after-box {
+            background: rgba(100, 200, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .before-after-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .before-after-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .savings-badge {
+            background: linear-gradient(135deg, #00ff88, #64c8ff);
+            color: #0a0e27;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .risk-factors-list {
+            background: rgba(100, 200, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .risk-factor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+        }
+
+        .risk-factor-item:last-child {
+            border-bottom: none;
+        }
+
+        .risk-factor-name {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .risk-factor-score {
+            color: #64c8ff;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+            .before-after-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: rgba(10, 14, 39, 0.95); border-bottom: 1px solid rgba(100, 200, 255, 0.1);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt"></i> InsurGuard AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/risk-assessment">Assessment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/security-vault">Security</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title"><i class="fas fa-heartbeat"></i> Risk Assessment</h1>
+            <p class="page-subtitle">Get your personalized insurance risk analysis powered by AI</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-section">
+        <div class="container-lg">
+            <div class="row justify-content-center g-4">
+                <!-- Form Column - Centered with responsive width -->
+                <div class="col-12 col-lg-6">
+                    <div class="form-container h-100">
+                        <h3 style="margin-bottom: 30px; color: white; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-clipboard-list"></i> Your Health Profile
+                        </h3>
+
+                        <form id="assessmentForm">
+                            <!-- Age -->
+                            <div class="mb-4">
+                                <label for="age" class="form-label">Age (years)</label>
+                                <input type="number" class="form-control" id="age" name="age" 
+                                       min="18" max="100" placeholder="Enter your age" required>
+                            </div>
+
+                            <!-- Sex -->
+                            <div class="mb-4">
+                                <label for="sex" class="form-label">Sex</label>
+                                <select class="form-select" id="sex" name="sex" required>
+                                    <option value="">Select...</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+
+                            <!-- BMI -->
+                            <div class="mb-4">
+                                <label for="bmi" class="form-label">BMI (Body Mass Index)</label>
+                                <input type="number" class="form-control" id="bmi" name="bmi" 
+                                       min="10" max="60" step="0.1" placeholder="e.g., 24.5" required>
+                                <small style="color: rgba(255,255,255,0.5); display: block; margin-top: 6px;">Weight (kg) / Height² (m²)</small>
+                            </div>
+
+                            <!-- Smoker -->
+                            <div class="mb-4">
+                                <label for="smoker" class="form-label">Smoker Status</label>
+                                <select class="form-select" id="smoker" name="smoker" required>
+                                    <option value="">Select...</option>
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                            </div>
+
+                            <!-- Children -->
+                            <div class="mb-4">
+                                <label for="children" class="form-label">Number of Children</label>
+                                <input type="number" class="form-control" id="children" name="children" 
+                                       min="0" max="10" placeholder="0" required>
+                            </div>
+
+                            <!-- Region -->
+                            <div class="mb-5">
+                                <label for="region" class="form-label">Region</label>
+                                <select class="form-select" id="region" name="region" required>
+                                    <option value="">Select...</option>
+                                    <option value="northwest">Northwest</option>
+                                    <option value="northeast">Northeast</option>
+                                    <option value="southwest">Southwest</option>
+                                    <option value="southeast">Southeast</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-submit" id="submitBtn">
+                                <i class="fas fa-bolt"></i> Analyze Risk Profile
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Results Column - Centered with responsive width -->
+                <div class="col-12 col-lg-6">
+                    <div id="resultsContainer" class="results-container h-100">
+                        <!-- Primary Assessment -->
+                        <div class="result-card">
+                            <div class="result-label"><i class="fas fa-dollar-sign"></i> Predicted Insurance Cost</div>
+                            <div class="result-value" id="resultCost">$0.00</div>
+                            <div class="result-label" style="margin-top: 15px; margin-bottom: 8px;">Risk Level</div>
+                            <div style="font-size: 1.5rem;" id="resultRiskLevel">ANALYZING...</div>
+                        </div>
+
+                        <!-- RL Optimization -->
+                        <div class="result-card">
+                            <div class="result-label"><i class="fas fa-robot"></i> Dynamic Premium Optimization</div>
+                            <div class="before-after-grid">
+                                <div class="before-after-box">
+                                    <div class="before-after-label">Before RL</div>
+                                    <div class="before-after-value" id="beforeRL">$0.00</div>
+                                </div>
+                                <div class="before-after-box">
+                                    <div class="before-after-label">After RL</div>
+                                    <div class="before-after-value" id="afterRL">$0.00</div>
+                                </div>
+                            </div>
+                            <div id="savingsBadge"></div>
+                            <div style="margin-top: 10px; text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem;" id="rlAction"></div>
+                        </div>
+
+                        <!-- Risk Factors -->
+                        <div class="result-card">
+                            <div class="result-label"><i class="fas fa-lightbulb"></i> Top Risk Factors (XAI Breakdown)</div>
+                            <div class="risk-factors-list" id="riskFactorsList">
+                                <div style="text-align: center; color: rgba(255,255,255,0.5);">Loading factors...</div>
+                            </div>
+                        </div>
+
+                        <!-- Security Info -->
+                        <div class="result-card">
+                            <div class="result-label"><i class="fas fa-lock"></i> Security & Integrity</div>
+                            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.8;">
+                                <div><i class="fas fa-check-circle" style="color: #00ff88;"></i> RSA-2048 Encryption: Data Protected</div>
+                                <div><i class="fas fa-check-circle" style="color: #00ff88;"></i> SHA-512 Hash: <span id="hashValue" style="font-family: monospace; font-size: 0.75rem;">Verifying...</span></div>
+                                <div style="margin-top: 10px; color: rgba(255,255,255,0.5);">All sensitive health information is encrypted and hashed for security.</div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-submit" style="margin-top: 20px; background: rgba(100, 200, 255, 0.15); color: #64c8ff;" onclick="location.reload()">
+                            <i class="fas fa-redo"></i> New Assessment
+                        </button>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loadingState" style="text-align: center; padding: 60px 20px;">
+                        <p style="color: rgba(255,255,255,0.5);">Enter your health information and click "Analyze Risk Profile" to get started.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Matrix Overlay -->
+    <div class="security-matrix" id="securityMatrix"></div>
+
+    <!-- Encryption Overlay -->
+    <div class="encryption-overlay" id="encryptionOverlay">
+        <div class="encryption-status">
+            <div class="spinner-pulse"></div>
+            <h3>Securing Your Data</h3>
+            <p style="margin-top: 10px; color: rgba(255,255,255,0.7);">
+                <i class="fas fa-lock"></i> RSA-2048 Encryption<br>
+                <i class="fas fa-hashtag"></i> SHA-512 Hashing<br>
+                <i class="fas fa-database"></i> Integrity Verification
+            </p>
+            <div class="hash-display" style="margin-top: 20px;">
+                Generating cryptographic hashes...
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const form = document.getElementById('assessmentForm');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const loadingState = document.getElementById('loadingState');
+        const submitBtn = document.getElementById('submitBtn');
+        const encryptionOverlay = document.getElementById('encryptionOverlay');
+        const securityMatrix = document.getElementById('securityMatrix');
+
+        // Security Matrix Animation
+        function showSecurityMatrix() {
+            securityMatrix.classList.add('active');
+            const cols = Math.ceil(window.innerWidth / 40);
+            const rows = Math.ceil(window.innerHeight / 40);
+
+            for (let i = 0; i < cols * rows; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'matrix-cell';
+                cell.style.left = (i % cols) * 40 + 'px';
+                cell.style.top = Math.floor(i / cols) * 40 + 'px';
+                cell.textContent = Math.random() > 0.5 ? '1' : '0';
+                securityMatrix.appendChild(cell);
+
+                setTimeout(() => {
+                    cell.classList.add('active');
+                }, Math.random() * 2000);
+            }
+
+            setTimeout(() => {
+                securityMatrix.classList.remove('active');
+                securityMatrix.innerHTML = '';
+            }, 2500);
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+
+            // Show security effects
+            showSecurityMatrix();
+            encryptionOverlay.classList.add('active');
+
+            const formData = {
+                age: document.getElementById('age').value,
+                sex: document.getElementById('sex').value,
+                bmi: document.getElementById('bmi').value,
+                smoker: document.getElementById('smoker').value,
+                children: document.getElementById('children').value,
+                region: document.getElementById('region').value
+            };
+
+            try {
+                const response = await fetch('/api/assessment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Hide overlay after delay
+                setTimeout(() => {
+                    encryptionOverlay.classList.remove('active');
+                    displayResults(data);
+                }, 2500);
+
+            } catch (error) {
+                console.error('Error:', error);
+                encryptionOverlay.classList.remove('active');
+                alert('Error: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-bolt"></i> Analyze Risk Profile';
+            }
+        });
+
+        function displayResults(data) {
+            loadingState.style.display = 'none';
+            resultsContainer.classList.add('show');
+
+            // Display assessment results
+            document.getElementById('resultCost').textContent = 
+                '$' + data.assessment.predicted_charge.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            
+            const riskLevel = data.assessment.risk_level;
+            const riskLevelEl = document.getElementById('resultRiskLevel');
+            riskLevelEl.textContent = riskLevel;
+            riskLevelEl.className = `risk-level-${riskLevel.toLowerCase()}`;
+
+            // RL Optimization
+            document.getElementById('beforeRL').textContent = 
+                '$' + data.rl_optimization.original_premium.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('afterRL').textContent = 
+                '$' + data.rl_optimization.optimized_premium.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            const savings = data.assessment.savings;
+            if (savings > 0) {
+                document.getElementById('savingsBadge').innerHTML = 
+                    `<div class="savings-badge"><i class="fas fa-piggy-bank"></i> Save $${savings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>`;
+            } else {
+                document.getElementById('savingsBadge').innerHTML = '';
+            }
+
+            document.getElementById('rlAction').textContent = 
+                `RL Agent Action: ${data.rl_optimization.action} (${data.rl_optimization.policy_change})`;
+
+            // Risk Factors
+            const factorsList = document.getElementById('riskFactorsList');
+            if (data.risk_factors && data.risk_factors.length > 0) {
+                factorsList.innerHTML = data.risk_factors.map(factor => {
+                    const factorName = typeof factor === 'string' ? factor : (factor.factor || factor);
+                    const influence = typeof factor === 'object' ? (factor.influence * 100).toFixed(1) : '100';
+                    return `
+                        <div class="risk-factor-item">
+                            <span class="risk-factor-name">${factorName}</span>
+                            <span class="risk-factor-score">${influence}%</span>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                factorsList.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.5);">Risk factors calculated</div>';
+            }
+
+            // Security Hash
+            document.getElementById('hashValue').textContent = data.security.charge_hash || 'Verified';
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-bolt"></i> Analyze Risk Profile';
+        }
+    </script>
+</body>
+</html>

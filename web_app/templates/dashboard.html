@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - InsurGuard AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            padding: 40px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .content-section {
+            padding: 40px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(100, 200, 255, 0.5);
+            box-shadow: 0 0 30px rgba(100, 200, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .chart-container {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.05) 0%, rgba(0, 255, 136, 0.05) 100%);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-title {
+            color: white;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        /* Risk Distribution Pie Chart */
+        .distribution-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .distribution-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .legend-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .legend-value {
+            margin-left: auto;
+            font-weight: 700;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+            .distribution-container {
+                grid-template-columns: 1fr;
+            }
+            .chart-wrapper {
+                height: 300px;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(100, 200, 255, 0.3);
+            border-top: 3px solid #64c8ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: rgba(10, 14, 39, 0.95); border-bottom: 1px solid rgba(100, 200, 255, 0.1);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt"></i> InsurGuard AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/risk-assessment">Assessment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/security-vault">Security</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title"><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
+            <p style="color: rgba(255,255,255,0.6); margin-top: 10px;">Real-time health risk trends and premium optimization analytics</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-section">
+        <div class="container-lg">
+            <!-- Statistics Row - Responsive Metric Cards -->
+            <div class="row mb-5 g-3 g-lg-4">
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="stat-card h-100">
+                        <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                        <div class="stat-label">Total Policies</div>
+                        <div class="stat-value" id="totalPolicies">0</div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="stat-card h-100">
+                        <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="stat-label">Average Premium</div>
+                        <div class="stat-value" id="avgPremium">$0</div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="stat-card h-100">
+                        <div class="stat-icon"><i class="fas fa-birthday-cake"></i></div>
+                        <div class="stat-label">Average Age</div>
+                        <div class="stat-value" id="avgAge">0</div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="stat-card h-100">
+                        <div class="stat-icon"><i class="fas fa-smile"></i></div>
+                        <div class="stat-label">Satisfaction</div>
+                        <div class="stat-value" id="satisfaction">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row - Main Analytics -->
+            <div class="row g-4 mb-4">
+                <!-- Trend Chart -->
+                <div class="col-12 col-xl-8">
+                    <div class="chart-container h-100">
+                        <div class="chart-title">
+                            <i class="fas fa-chart-line"></i> Health Risk & Premium Trends (30 Days)
+                        </div>
+                        <div class="chart-wrapper chart-wrapper-lg">
+                            <canvas id="trendChart" data-responsive="true" data-aspect-ratio="16/9"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Distribution -->
+                <div class="col-12 col-xl-4">
+                    <div class="chart-container h-100">
+                        <div class="chart-title">
+                            <i class="fas fa-chart-pie"></i> Risk Distribution
+                        </div>
+                        <div class="distribution-container">
+                            <div class="chart-wrapper chart-wrapper-md">
+                                <canvas id="distributionChart" data-responsive="true" data-aspect-ratio="1/1"></canvas>
+                            </div>
+                            <div class="distribution-legend" id="distributionLegend"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar Chart Row -->
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i class="fas fa-bar-chart"></i> Premium Adjustment Performance
+                        </div>
+                        <div class="chart-wrapper chart-wrapper-lg">
+                            <canvas id="performanceChart" data-responsive="true" data-aspect-ratio="16/9"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Chart.js color scheme
+        const primaryColor = 'rgba(100, 200, 255, 1)';
+        const primaryColorLight = 'rgba(100, 200, 255, 0.1)';
+        const accentColor = 'rgba(0, 255, 136, 1)';
+        const accentColorLight = 'rgba(0, 255, 136, 0.1)';
+
+        // Custom Chart.js plugin for glowing effect
+        const glowPlugin = {
+            id: 'glow',
+            afterDatasetsDraw(chart) {
+                const ctx = chart.ctx;
+                ctx.shadowColor = primaryColor;
+                ctx.shadowBlur = 10;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+            }
+        };
+
+        // Fetch statistics
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/api/dashboard/statistics');
+                const data = await response.json();
+                
+                document.getElementById('totalPolicies').textContent = data.total_policies.toLocaleString();
+                document.getElementById('avgPremium').textContent = '$' + data.average_premium.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('avgAge').textContent = data.average_age.toFixed(1);
+                document.getElementById('satisfaction').textContent = data.customer_satisfaction.toFixed(1) + '%';
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        // Fetch and display trend chart
+        async function loadTrendChart() {
+            try {
+                const response = await fetch('/api/dashboard/trends');
+                const data = await response.json();
+
+                const ctx = document.getElementById('trendChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [
+                            {
+                                label: 'Risk Score',
+                                data: data.risk_scores,
+                                borderColor: primaryColor,
+                                backgroundColor: primaryColorLight,
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4,
+                                pointBackgroundColor: primaryColor,
+                                pointBorderColor: '#fff',
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                shadowBlur: 15,
+                                shadowColor: primaryColor
+                            },
+                            {
+                                label: 'Avg Premium ($1000s)',
+                                data: data.charges.map(v => v / 1000),
+                                borderColor: accentColor,
+                                backgroundColor: accentColorLight,
+                                borderWidth: 3,
+                                fill: false,
+                                tension: 0.4,
+                                pointBackgroundColor: accentColor,
+                                pointBorderColor: '#fff',
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: 'rgba(255,255,255,0.7)',
+                                    font: { weight: 'bold' },
+                                    usePointStyle: true,
+                                    padding: 15
+                                }
+                            },
+                            filler: {
+                                propagate: true
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Risk Score',
+                                    color: primaryColor
+                                },
+                                grid: {
+                                    color: 'rgba(100, 200, 255, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(255,255,255,0.5)'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Avg Premium ($1000s)',
+                                    color: accentColor
+                                },
+                                grid: {
+                                    drawOnChartArea: false,
+                                },
+                                ticks: {
+                                    color: 'rgba(255,255,255,0.5)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(100, 200, 255, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(255,255,255,0.5)',
+                                    maxRotation: 45,
+                                    minRotation: 0
+                                }
+                            }
+                        }
+                    },
+                    plugins: [glowPlugin]
+                });
+            } catch (error) {
+                console.error('Error loading trend chart:', error);
+            }
+        }
+
+        // Fetch and display distribution chart
+        async function loadDistributionChart() {
+            try {
+                const response = await fetch('/api/dashboard/distribution');
+                const data = await response.json();
+
+                const total = data.low + data.medium + data.high + data.critical;
+                const labels = ['Low Risk', 'Medium Risk', 'High Risk', 'Critical'];
+                const values = [data.low, data.medium, data.high, data.critical];
+                const colors = ['rgba(0, 255, 136, 1)', 'rgba(255, 170, 0, 1)', 'rgba(255, 107, 107, 1)', 'rgba(255, 23, 68, 1)'];
+
+                const ctx = document.getElementById('distributionChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: colors,
+                            borderColor: '#0a0e27',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+
+                // Build legend
+                const legend = document.getElementById('distributionLegend');
+                labels.forEach((label, index) => {
+                    const percentage = ((values[index] / total) * 100).toFixed(1);
+                    legend.innerHTML += `
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: ${colors[index]};"></div>
+                            <span class="legend-label">${label}</span>
+                            <span class="legend-value">${values[index]} (${percentage}%)</span>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading distribution chart:', error);
+            }
+        }
+
+        // Load performance chart
+        async function loadPerformanceChart() {
+            const categories = ['Q1', 'Q2', 'Q3', 'Q4'];
+            const originalPremiums = [12500, 12800, 13100, 13400];
+            const optimizedPremiums = [11875, 12160, 12445, 12730];
+
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [
+                        {
+                            label: 'Before RL Optimization',
+                            data: originalPremiums,
+                            backgroundColor: 'rgba(100, 200, 255, 0.3)',
+                            borderColor: primaryColor,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'After RL Optimization',
+                            data: optimizedPremiums,
+                            backgroundColor: accentColorLight,
+                            borderColor: accentColor,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255,255,255,0.7)',
+                                font: { weight: 'bold' },
+                                padding: 15
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(100, 200, 255, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: 'rgba(255,255,255,0.5)',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: 'rgba(255,255,255,0.5)'
+                            }
+                        }
+                    }
+                },
+                plugins: [glowPlugin]
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatistics();
+            loadTrendChart();
+            loadDistributionChart();
+            loadPerformanceChart();
+        });
+    </script>
+</body>
+</html>

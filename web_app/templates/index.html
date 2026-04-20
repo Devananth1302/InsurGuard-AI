@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsurGuard AI - Smart Insurance Risk System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+    <style>
+        /* ============================================================================
+           HERO SECTION - CINEMATIC DESIGN
+           ============================================================================ */
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1728 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(100, 200, 255, 0.5);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(100px, -100px);
+                opacity: 0;
+            }
+        }
+
+        /* Glowing text effect */
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #64c8ff 0%, #00ff88 50%, #64c8ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow-pulse 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(100, 200, 255, 0.3);
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(100, 200, 255, 0.4));
+            }
+            50% {
+                filter: drop-shadow(0 0 40px rgba(0, 255, 136, 0.6));
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        /* CTA Buttons */
+        .cta-button {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            color: #0a0e27;
+            box-shadow: 0 0 30px rgba(100, 200, 255, 0.3);
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(100, 200, 255, 0.6);
+            color: #0a0e27;
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(100, 200, 255, 0.5);
+        }
+
+        .cta-secondary:hover {
+            background: rgba(100, 200, 255, 0.1);
+            border-color: #64c8ff;
+            color: white;
+        }
+
+        /* Feature Cards */
+        .features-section {
+            background: #0f1728;
+            padding: 80px 0;
+            position: relative;
+            z-index: 5;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.05) 0%, rgba(0, 255, 136, 0.05) 100%);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(100, 200, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(100, 200, 255, 0.5);
+            box-shadow: 0 0 30px rgba(100, 200, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        .navbar-dark {
+            background: rgba(10, 14, 39, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7) !important;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .nav-link:hover {
+            color: #64c8ff !important;
+        }
+
+        /* Section spacing */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 50px;
+            text-align: center;
+            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            .cta-button {
+                padding: 12px 30px;
+                margin: 8px 5px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt"></i> InsurGuard AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/risk-assessment">Assessment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/security-vault">Security</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="particles" id="particles"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">INTRODUCING<br>INSURGUARD AI</h1>
+            <p class="hero-subtitle">Advanced Risk Assessment Powered by Deep Learning & Reinforcement Learning</p>
+            
+            <div style="margin-top: 3rem;">
+                <a href="/risk-assessment" class="btn cta-button cta-primary">
+                    <i class="fas fa-bolt"></i> Get Risk Assessment
+                </a>
+                <a href="/dashboard" class="btn cta-button cta-secondary">
+                    <i class="fas fa-chart-line"></i> View Analytics
+                </a>
+            </div>
+
+            <div style="margin-top: 4rem; color: rgba(255,255,255,0.5); font-size: 0.9rem;">
+                <p><i class="fas fa-gpu"></i> GPU-Accelerated • <i class="fas fa-lock"></i> RSA-2048 Encrypted • <i class="fas fa-brain"></i> AI-Powered</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Enterprise Features</h2>
+            
+            <div class="row">
+                <!-- Deep Learning -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="feature-title">Deep Learning</h3>
+                        <p class="feature-desc">
+                            TensorFlow/Keras MLP neural network with batch normalization and dropout for accurate risk prediction. GPU-accelerated inference on NVIDIA Quadro T1000.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Reinforcement Learning -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="feature-title">Dynamic Pricing</h3>
+                        <p class="feature-desc">
+                            Q-Learning agent optimizes insurance premiums in real-time based on health metrics. Maximizes profitability while maintaining customer satisfaction.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h3 class="feature-title">Bank-Grade Security</h3>
+                        <p class="feature-desc">
+                            RSA-2048 encryption for sensitive data and SHA-512 hashing for integrity verification. HIPAA-compliant data protection.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Real-time Analytics -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">Real-time Analytics</h3>
+                        <p class="feature-desc">
+                            Interactive dashboards with Chart.js visualizations. Monitor health trends, risk distribution, and premium adjustments in real-time.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Explainable AI -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="feature-title">Explainable AI</h3>
+                        <p class="feature-desc">
+                            Permutation-based feature importance shows which health factors drive your risk assessment. Complete transparency in decision-making.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Audit Trail -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-list-check"></i>
+                        </div>
+                        <h3 class="feature-title">Audit Compliance</h3>
+                        <p class="feature-desc">
+                            Complete audit log with SHA-512 hashes for every transaction. Ensures regulatory compliance and financial integrity.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: #0a0e27; color: rgba(255,255,255,0.5); padding: 30px 0; text-align: center; border-top: 1px solid rgba(100, 200, 255, 0.1);">
+        <div class="container">
+            <p>&copy; 2026 InsurGuard AI by DEVANANTH. All rights reserved.</p>
+            <p><small>Advanced Insurance Risk Assessment System | GPU-Accelerated | Enterprise Security</small></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Generate animated particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
