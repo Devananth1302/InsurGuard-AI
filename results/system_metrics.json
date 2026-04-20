@@ -1,0 +1,112 @@
+{
+  "ml_model": {
+    "loss": 212753776.0,
+    "mae": 10599.3154296875,
+    "mse": 212753776.0,
+    "rmse": 14586.080078125,
+    "r2_score": -0.3861898183822632
+  },
+  "rl_agent": {
+    "episodes_trained": 20,
+    "total_reward": 416612.977602005,
+    "average_reward": 20830.64888010025,
+    "max_reward": 21031.998839855194,
+    "q_table_size": 2,
+    "final_epsilon": 0.9046104802746175,
+    "reward_trend": [
+      20985.998789310455,
+      20754.99884033203,
+      20851.998871326447,
+      20899.99885225296,
+      21031.998839855194,
+      20872.99878692627,
+      20952.99882030487,
+      20884.99883556366,
+      20817.998829364777,
+      20764.998928546906
+    ]
+  },
+  "xai_samples": [
+    {
+      "predicted_charge": 1125.2783203125,
+      "risk_level": "LOW",
+      "top_risk_factors": [
+        {
+          "factor": "smoker_yes",
+          "influence_score": 1504.412353515625
+        },
+        {
+          "factor": "age",
+          "influence_score": 1041.3184814453125
+        },
+        {
+          "factor": "sex_male",
+          "influence_score": 739.3035888671875
+        },
+        {
+          "factor": "bmi",
+          "influence_score": 658.3187255859375
+        },
+        {
+          "factor": "region_southwest",
+          "influence_score": 453.59521484375
+        }
+      ],
+      "actual_charge": 8988.15875
+    },
+    {
+      "predicted_charge": 1854.3892822265625,
+      "risk_level": "LOW",
+      "top_risk_factors": [
+        {
+          "factor": "smoker_yes",
+          "influence_score": 8945.845703125
+        },
+        {
+          "factor": "age",
+          "influence_score": 702.204345703125
+        },
+        {
+          "factor": "region_southeast",
+          "influence_score": 373.8638916015625
+        },
+        {
+          "factor": "children",
+          "influence_score": 304.4544677734375
+        },
+        {
+          "factor": "region_southwest",
+          "influence_score": 79.511962890625
+        }
+      ],
+      "actual_charge": 11552.904
+    },
+    {
+      "predicted_charge": 2777.39111328125,
+      "risk_level": "LOW",
+      "top_risk_factors": [
+        {
+          "factor": "smoker_yes",
+          "influence_score": 7739.66259765625
+        },
+        {
+          "factor": "age",
+          "influence_score": 1259.8656005859375
+        },
+        {
+          "factor": "children",
+          "influence_score": 938.218994140625
+        },
+        {
+          "factor": "bmi",
+          "influence_score": 848.9007568359375
+        },
+        {
+          "factor": "region_southeast",
+          "influence_score": 435.194580078125
+        }
+      ],
+      "actual_charge": 10370.91255
+    }
+  ]
+}

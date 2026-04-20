@@ -1,0 +1,72 @@
+[
+  {
+    "original_charge": 1125.2784423828125,
+    "adjusted_charge": 1181.5423583984375,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  },
+  {
+    "original_charge": 6190.83544921875,
+    "adjusted_charge": 6500.376953125,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  },
+  {
+    "original_charge": 2425.232177734375,
+    "adjusted_charge": 2546.49365234375,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  },
+  {
+    "original_charge": 21.81393814086914,
+    "adjusted_charge": 22.904634475708008,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  },
+  {
+    "original_charge": 1073.2869873046875,
+    "adjusted_charge": 1126.9512939453125,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  },
+  {
+    "original_charge": 4583.3583984375,
+    "adjusted_charge": 4812.52587890625,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  },
+  {
+    "original_charge": 413.8189697265625,
+    "adjusted_charge": 434.5098876953125,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  },
+  {
+    "original_charge": 9726.6337890625,
+    "adjusted_charge": 10212.96484375,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  },
+  {
+    "original_charge": 1322.333984375,
+    "adjusted_charge": 1388.4505615234375,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  },
+  {
+    "original_charge": 584.4053955078125,
+    "adjusted_charge": 613.6256103515625,
+    "adjustment_factor": 1.05,
+    "action": "INCREASE (5%)",
+    "policy_change": "+5.0%"
+  }
+]
