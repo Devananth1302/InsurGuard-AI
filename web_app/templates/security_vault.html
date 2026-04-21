@@ -329,6 +329,24 @@
             .demo-grid {
                 grid-template-columns: 1fr;
             }
+            .certificate-section {
+                padding: 25px;
+            }
+            .compliance-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1440px) {
+            .container-lg {
+                max-width: 1380px;
+            }
+            .certificate-section {
+                padding: 50px;
+            }
+            .compliance-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
     </style>
 </head>
@@ -363,7 +381,7 @@
 
     <!-- Main Content -->
     <div class="content-section">
-        <div class="container">
+        <div class="container-lg">
             <!-- Security Certificate -->
             <div class="certificate-section">
                 <div class="certificate-icon">

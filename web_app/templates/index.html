@@ -74,6 +74,7 @@
             background-clip: text;
             animation: glow-pulse 3s ease-in-out infinite;
             text-shadow: 0 0 30px rgba(100, 200, 255, 0.3);
+            line-height: 1.2;
         }
 
         @keyframes glow-pulse {
@@ -91,6 +92,7 @@
             margin-bottom: 3rem;
             font-weight: 300;
             letter-spacing: 2px;
+            line-height: 1.6;
         }
 
         /* CTA Buttons */
@@ -104,6 +106,9 @@
             margin: 0 10px;
             position: relative;
             overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .cta-primary {
@@ -128,6 +133,24 @@
             background: rgba(100, 200, 255, 0.1);
             border-color: #64c8ff;
             color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 2rem;
+            }
+
+            .cta-button {
+                padding: 12px 30px;
+                font-size: 1rem;
+                margin: 0.5rem;
+            }
         }
 
         /* Feature Cards */
@@ -260,6 +283,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/dashboard">Dashboard</a>
                     </li>

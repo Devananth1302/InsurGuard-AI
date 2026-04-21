@@ -16,92 +16,155 @@
         }
 
         .page-header {
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            padding: 40px 0;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            padding: 50px 0;
             text-align: center;
-            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            border-bottom: 2px solid rgba(100, 200, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(100, 200, 255, 0.05);
         }
 
         .page-title {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            background: linear-gradient(135deg, #64c8ff 0%, #00ff88 50%, #64c8ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .content-section {
-            padding: 40px 0;
+            padding: 50px 0;
+            background: linear-gradient(180deg, rgba(10, 14, 39, 0) 0%, rgba(100, 200, 255, 0.03) 100%);
         }
 
         .stat-card {
-            background: linear-gradient(135deg, rgba(100, 200, 255, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%);
-            border: 1px solid rgba(100, 200, 255, 0.2);
-            border-radius: 12px;
-            padding: 25px;
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.15) 0%, rgba(0, 255, 136, 0.15) 100%);
+            border: 2px solid rgba(100, 200, 255, 0.3);
+            border-radius: 16px;
+            padding: 30px 25px;
             margin-bottom: 25px;
             text-align: center;
             transition: all 0.3s ease;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(100, 200, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+            z-index: 1;
         }
 
         .stat-card:hover {
             border-color: rgba(100, 200, 255, 0.5);
-            box-shadow: 0 0 30px rgba(100, 200, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(100, 200, 255, 0.15), inset 0 0 10px rgba(100, 200, 255, 0.02);
             transform: translateY(-5px);
         }
 
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card > * {
+            position: relative;
+            z-index: 2;
+        }
+
         .stat-icon {
-            font-size: 2rem;
+            font-size: 2.5rem;
             background: linear-gradient(135deg, #64c8ff, #00ff88);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .stat-label {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            letter-spacing: 1.2px;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
 
         .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: 800;
             color: white;
+            text-shadow: 0 2px 10px rgba(100, 200, 255, 0.2);
         }
 
         .chart-container {
-            background: linear-gradient(135deg, rgba(100, 200, 255, 0.05) 0%, rgba(0, 255, 136, 0.05) 100%);
-            border: 1px solid rgba(100, 200, 255, 0.2);
-            border-radius: 15px;
-            padding: 30px;
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.08) 0%, rgba(0, 255, 136, 0.08) 100%);
+            border: 2px solid rgba(100, 200, 255, 0.25);
+            border-radius: 18px;
+            padding: 35px;
             margin-bottom: 30px;
             backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .chart-container:hover {
+            border-color: rgba(100, 200, 255, 0.35);
+            box-shadow: 0 4px 16px rgba(100, 200, 255, 0.08);
         }
 
         .chart-title {
             color: white;
-            font-weight: 700;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-title i {
+            background: linear-gradient(135deg, #64c8ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
         }
 
         .chart-wrapper {
             position: relative;
-            height: 400px;
             width: 100%;
+        }
+
+        .chart-wrapper-lg {
+            height: 420px;
+            min-height: 420px;
+            max-height: 420px;
+        }
+
+        .chart-wrapper-md {
+            height: 360px;
+            min-height: 360px;
+            max-height: 360px;
         }
 
         /* Risk Distribution Pie Chart */
         .distribution-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 25px;
             align-items: center;
+            min-height: 360px;
         }
 
         .distribution-legend {
@@ -113,35 +176,80 @@
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(100, 200, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .legend-item:hover {
+            background: rgba(100, 200, 255, 0.1);
+            border-color: rgba(100, 200, 255, 0.3);
+            transform: translateX(5px);
         }
 
         .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            box-shadow: 0 0 8px currentColor;
+            flex-shrink: 0;
         }
 
         .legend-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            font-weight: 600;
+            flex: 1;
         }
 
         .legend-value {
-            margin-left: auto;
-            font-weight: 700;
+            font-weight: 800;
             color: white;
+            background: rgba(100, 200, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
         }
+
+        /* Enhanced animations for visual appeal */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .row {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+
+        .row:nth-child(1) { animation-delay: 0.1s; }
+        .row:nth-child(2) { animation-delay: 0.2s; }
+        .row:nth-child(3) { animation-delay: 0.3s; }
 
         @media (max-width: 768px) {
             .page-title {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
             .distribution-container {
                 grid-template-columns: 1fr;
             }
-            .chart-wrapper {
+            .chart-wrapper-lg {
+                height: 350px;
+                min-height: 350px;
+                max-height: 350px;
+            }
+            .chart-wrapper-md {
                 height: 300px;
+                min-height: 300px;
+                max-height: 300px;
             }
         }
 
@@ -280,18 +388,6 @@
         const accentColor = 'rgba(0, 255, 136, 1)';
         const accentColorLight = 'rgba(0, 255, 136, 0.1)';
 
-        // Custom Chart.js plugin for glowing effect
-        const glowPlugin = {
-            id: 'glow',
-            afterDatasetsDraw(chart) {
-                const ctx = chart.ctx;
-                ctx.shadowColor = primaryColor;
-                ctx.shadowBlur = 10;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-            }
-        };
-
         // Fetch statistics
         async function loadStatistics() {
             try {
@@ -353,6 +449,10 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeInOutQuart'
+                        },
                         interaction: {
                             mode: 'index',
                             intersect: false,
@@ -360,14 +460,27 @@
                         plugins: {
                             legend: {
                                 labels: {
-                                    color: 'rgba(255,255,255,0.7)',
-                                    font: { weight: 'bold' },
+                                    color: 'rgba(255,255,255,0.8)',
+                                    font: { weight: 'bold', size: 12 },
                                     usePointStyle: true,
-                                    padding: 15
+                                    padding: 20,
+                                    boxWidth: 6
                                 }
                             },
                             filler: {
                                 propagate: true
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(10, 14, 39, 0.95)',
+                                borderColor: 'rgba(100, 200, 255, 0.6)',
+                                borderWidth: 2,
+                                padding: 14,
+                                titleColor: '#64c8ff',
+                                titleFont: { weight: 'bold', size: 13 },
+                                bodyColor: 'white',
+                                bodyFont: { size: 12 },
+                                cornerRadius: 10,
+                                displayColors: true
                             }
                         },
                         scales: {
@@ -417,7 +530,7 @@
                             }
                         }
                     },
-                    plugins: [glowPlugin]
+                    plugins: []
                 });
             } catch (error) {
                 console.error('Error loading trend chart:', error);
@@ -450,9 +563,24 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeInOutQuart'
+                        },
                         plugins: {
                             legend: {
                                 display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(10, 14, 39, 0.95)',
+                                borderColor: 'rgba(100, 200, 255, 0.6)',
+                                borderWidth: 2,
+                                padding: 12,
+                                titleColor: '#64c8ff',
+                                titleFont: { weight: 'bold', size: 12 },
+                                bodyColor: 'white',
+                                bodyFont: { size: 11 },
+                                cornerRadius: 8
                             }
                         }
                     }
@@ -506,13 +634,30 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    },
                     plugins: {
                         legend: {
                             labels: {
-                                color: 'rgba(255,255,255,0.7)',
-                                font: { weight: 'bold' },
-                                padding: 15
+                                color: 'rgba(255,255,255,0.8)',
+                                font: { weight: 'bold', size: 12 },
+                                padding: 20,
+                                boxWidth: 8
                             }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(10, 14, 39, 0.95)',
+                            borderColor: 'rgba(100, 200, 255, 0.6)',
+                            borderWidth: 2,
+                            padding: 14,
+                            titleColor: '#64c8ff',
+                            titleFont: { weight: 'bold', size: 13 },
+                            bodyColor: 'white',
+                            bodyFont: { size: 12 },
+                            cornerRadius: 10,
+                            displayColors: true
                         }
                     },
                     scales: {
@@ -540,7 +685,7 @@
                         }
                     }
                 },
-                plugins: [glowPlugin]
+                plugins: []
             });
         }
 
