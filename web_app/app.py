@@ -20,7 +20,7 @@ from flask import Flask, render_template, request, jsonify, session
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-
+from flask import redirect,url_for
 # Add parent directory to path for module imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -213,28 +213,70 @@ def add_audit_log(action, user_data, result, status='success'):
         logger.error(f"Audit log failed: {str(e)}")
         return None
 
+       
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        selected_role = request.form.get('role')  # 👈 NEW
+
+        users = {
+            'admin': {'password': 'admin123', 'role': 'admin'},
+            'user': {'password': 'user123', 'role': 'user'}
+        }
+
+        if username in users and users[username]['password'] == password:
+            
+            if users[username]['role'] != selected_role:
+                return render_template('login.html', error='Role mismatch!')
+            
+            session['username'] = username
+            session['role'] = users[username]['role']
+            return redirect(url_for('dashboard'))
+        
+        return render_template('login.html', error='Invalid credentials')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    """Logout and clear session"""
+    session.clear()
+    return redirect(url_for('index'))
+
 # ============================================================================
 # FLASK ROUTES - CORE PAGES
 # ============================================================================
 
 @app.route('/')
 def index():
-    """Homepage with cinematic hero section"""
-    return render_template('index.html')
+    return redirect(url_for('login'))
 
 @app.route('/dashboard')
 def dashboard():
     """Interactive analytics dashboard"""
+    if 'role' not in session:
+        return redirect(url_for('login'))
+    if session.get('role') != 'admin':
+        return redirect(url_for('risk_assessment'))
     return render_template('dashboard.html')
 
 @app.route('/risk-assessment')
 def risk_assessment():
     """Risk assessment form and results"""
+    if 'role' not in session:
+        return redirect(url_for('login'))
     return render_template('risk_assessment.html')
 
 @app.route('/security-vault')
 def security_vault():
     """Security and audit log viewer"""
+    if 'role' not in session:
+        return redirect(url_for('login'))
+    if session.get('role') != 'admin':
+        return redirect(url_for('risk_assessment'))
     return render_template('security_vault.html')
 
 # ============================================================================

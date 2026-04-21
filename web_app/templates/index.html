@@ -286,15 +286,26 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
                     </li>
+                    {% if session.role %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/risk-assessment">Assessment</a>
+                    </li>
+                    {% if session.role == 'admin' %}
                     <li class="nav-item">
                         <a class="nav-link" href="/dashboard">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/risk-assessment">Assessment</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="/security-vault">Security</a>
                     </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout ({{ session.role }})</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
