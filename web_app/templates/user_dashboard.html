@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsurGuard Dashboard - Risk Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-neon-cyan: #64c8ff;
+            --color-neon-lime: #00ff88;
+            --color-neon-red: #ff6b6b;
+            --color-neon-orange: #ffaa00;
+            --color-dark-bg: #0a0e27;
+            --color-card-bg: #1a1f3a;
+            --color-border-glow: rgba(100, 200, 255, 0.3);
+            --color-text-primary: #e0e7ff;
+            --color-text-muted: #a0aec0;
+            --color-text-dim: #718096;
+        }
+
+        body {
+            background: var(--color-dark-bg);
+            color: var(--color-text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                padding: 0 2rem;
+            }
+        }
+
+        /* Header */
+        .header {
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+            background: rgba(26, 31, 58, 0.5);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 0;
+        }
+
+        .header-left h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-left h1 .neon {
+            color: var(--color-neon-cyan);
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+        }
+
+        .header-left p {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .btn-primary {
+            background: var(--color-neon-cyan);
+            color: var(--color-dark-bg);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-neon-cyan);
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            margin-bottom: 3rem;
+        }
+
+        .glow-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 0.65rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.1);
+        }
+
+        .glow-card:hover {
+            border-color: var(--color-neon-cyan);
+            box-shadow: 0 0 30px rgba(100, 200, 255, 0.3), inset 0 0 20px rgba(100, 200, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        .risk-ring-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .risk-ring {
+            position: relative;
+            width: 160px;
+            height: 160px;
+        }
+
+        .risk-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .risk-ring-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .risk-ring-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--color-neon-cyan);
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .risk-ring-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .hero-title {
+            margin-bottom: 1rem;
+        }
+
+        .hero-title p {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero-title h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            font-family: 'Space Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hero-title h2.risk-low {
+            color: var(--color-neon-lime);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .hero-title h2.risk-medium {
+            color: var(--color-neon-orange);
+            text-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+        }
+
+        .hero-title h2.risk-high {
+            color: var(--color-neon-red);
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-value {
+            font-size: 1.875rem;
+            font-weight: bold;
+            font-family: 'Space Mono', monospace;
+            color: var(--color-text-primary);
+        }
+
+        .metric-value.positive {
+            color: var(--color-neon-lime);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .hero-description {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 0.65rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.1);
+        }
+
+        .stat-card:hover {
+            border-color: var(--color-neon-cyan);
+            box-shadow: 0 0 30px rgba(100, 200, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-label {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'Space Mono', monospace;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .stat-card-unit {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .stat-card-trend {
+            font-size: 0.75rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(100, 200, 255, 0.1);
+        }
+
+        .stat-card-trend.positive {
+            color: var(--color-neon-lime);
+        }
+
+        .stat-card-trend.neutral {
+            color: var(--color-text-muted);
+        }
+
+        .stat-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: var(--color-neon-cyan);
+            opacity: 0.6;
+        }
+
+        /* Risk Factors Section */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (min-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .risk-factors-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 0.65rem;
+            padding: 1.5rem;
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: var(--color-neon-cyan);
+        }
+
+        .card-header h3 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: var(--color-text-primary);
+        }
+
+        .risk-factor-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+        }
+
+        .risk-factor-item:last-child {
+            border-bottom: none;
+        }
+
+        .risk-factor-name {
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .risk-factor-bar-container {
+            flex: 1;
+            margin: 0 1rem;
+            height: 0.5rem;
+            background: rgba(100, 200, 255, 0.1);
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+
+        .risk-factor-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--color-neon-cyan), var(--color-neon-lime));
+            border-radius: 0.25rem;
+            transition: width 0.5s ease;
+        }
+
+        .risk-factor-score {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            min-width: 3rem;
+            text-align: right;
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* Quick Actions */
+        .quick-actions-card {
+            background: var(--color-card-bg);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 0.65rem;
+            padding: 1.5rem;
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.1);
+        }
+
+        .quick-actions-card h3 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: var(--color-text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            color: var(--color-text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-card-bg);
+            border-color: var(--color-neon-cyan);
+            color: var(--color-neon-cyan);
+        }
+
+        .btn-icon {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid rgba(100, 200, 255, 0.2);
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .footer-icon {
+            width: 1rem;
+            height: 1rem;
+            color: var(--color-neon-cyan);
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glow-card {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .stat-card {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-ring {
+                width: 120px;
+                height: 120px;
+            }
+
+            .hero-title h2 {
+                font-size: 2rem;
+            }
+
+            .glow-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>Welcome back, <span class="neon">User</span></h1>
+                    <p>Last assessment: 2 days ago</p>
+                </div>
+                <button class="btn-primary">
+                    <span>⚡</span>
+                    New Assessment
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="glow-card">
+                    <div class="hero-grid">
+                        <!-- Risk Ring -->
+                        <div class="risk-ring-container">
+                            <div class="risk-ring">
+                                <svg viewBox="0 0 120 120">
+                                    <!-- Background circle -->
+                                    <circle cx="60" cy="60" r="52" stroke="rgba(100, 200, 255, 0.1)" stroke-width="8" fill="none"/>
+                                    <!-- Progress circle (Low Risk = 25%) -->
+                                    <circle cx="60" cy="60" r="52" stroke="#00ff88" stroke-width="8" fill="none"
+                                        stroke-dasharray="81.68 326.73" stroke-linecap="round"
+                                        style="filter: drop-shadow(0 0 8px #00ff88); transition: stroke-dasharray 0.5s ease;"/>
+                                </svg>
+                                <div class="risk-ring-center">
+                                    <div class="risk-ring-value">42</div>
+                                    <div class="risk-ring-label">Risk Level</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Risk Info -->
+                        <div class="hero-info">
+                            <div class="hero-title">
+                                <p>OVERALL RISK ASSESSMENT</p>
+                                <h2 class="risk-low">
+                                    Low
+                                    <span style="font-size: 2.5rem;">✓</span>
+                                </h2>
+                            </div>
+
+                            <div class="hero-metrics">
+                                <div class="metric-item">
+                                    <span class="metric-label">ESTIMATED PREMIUM</span>
+                                    <span class="metric-value">$4,500</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">POTENTIAL SAVINGS</span>
+                                    <span class="metric-value positive">$1,200</span>
+                                </div>
+                            </div>
+
+                            <p class="hero-description">
+                                Your risk profile is optimized based on your health metrics and lifestyle factors. Take the new assessment to update your score.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Grid -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-card-label">Health Score</div>
+                            <div class="stat-card-value">
+                                78<span class="stat-card-unit">%</span>
+                            </div>
+                        </div>
+                        <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-card-trend positive">↑ +5% from last month</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-card-label">Risk Trend</div>
+                            <div class="stat-card-value">Stable</div>
+                        </div>
+                        <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    </div>
+                    <div class="stat-card-trend neutral">No change this month</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-card-label">Coverage Status</div>
+                            <div class="stat-card-value">Active</div>
+                        </div>
+                        <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-card-trend positive">All systems operational</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-card-label">Activity Level</div>
+                            <div class="stat-card-value">Good</div>
+                        </div>
+                        <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2 1m2-1l-2-1m2 1v2.5"/>
+                        </svg>
+                    </div>
+                    <div class="stat-card-trend positive">+2 sessions this week</div>
+                </div>
+            </section>
+
+            <!-- Risk Factors & Quick Actions -->
+            <section class="content-grid">
+                <!-- Risk Factors -->
+                <div class="risk-factors-card">
+                    <div class="card-header">
+                        <svg class="card-header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2M6.34 5.34l1.414 1.414m2 2l1.414 1.414m2 2l1.414 1.414m2 2l1.414 1.414M18.66 18.66l-1.414-1.414m-2-2l-1.414-1.414m-2-2l-1.414-1.414m-2-2l-1.414-1.414"/>
+                        </svg>
+                        <h3>Top Risk Factors</h3>
+                    </div>
+
+                    <div id="riskFactors">
+                        <!-- Risk factors will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-card">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn-secondary">
+                            <span>⚡</span>
+                            New Assessment
+                        </button>
+                        <button class="btn-secondary">
+                            <span>🛡️</span>
+                            View History
+                        </button>
+                        <button class="btn-secondary">
+                            <span>💪</span>
+                            Health Tips
+                        </button>
+                        <button class="btn-secondary">
+                            <span>⚙️</span>
+                            Settings
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <svg class="footer-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Your data is encrypted with RSA-2048 and protected by SHA-512 hashing</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Risk factors data
+        const riskFactors = [
+            { name: 'Age', influence: 0.25 },
+            { name: 'BMI', influence: 0.20 },
+            { name: 'Smoking Status', influence: 0.35 },
+            { name: 'Pre-existing Conditions', influence: 0.15 },
+            { name: 'Family History', influence: 0.05 }
+        ];
+
+        // Populate risk factors
+        const riskFactorsContainer = document.getElementById('riskFactors');
+        riskFactors.forEach((factor, index) => {
+            const percentage = (factor.influence * 100).toFixed(0);
+            const html = `
+                <div class="risk-factor-item" style="animation-delay: ${index * 0.1}s;">
+                    <span class="risk-factor-name">${factor.name}</span>
+                    <div class="risk-factor-bar-container">
+                        <div class="risk-factor-bar" style="width: ${percentage}%"></div>
+                    </div>
+                    <span class="risk-factor-score">${percentage}%</span>
+                </div>
+            `;
+            riskFactorsContainer.innerHTML += html;
+        });
+
+        // Add button click handlers
+        document.querySelectorAll('.btn-primary, .btn-secondary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const text = this.textContent.trim();
+                if (text.includes('Assessment')) {
+                    window.location.href='/risk-assessment';
+                } else if (text.includes('History')) {
+                    alert('Assessment History feature coming soon!');
+                } else if (text.includes('Tips')) {
+                    alert('Health Tips feature coming soon!');
+                } else if (text.includes('Settings')) {
+                    alert('Settings feature coming soon!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

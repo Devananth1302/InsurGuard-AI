@@ -1,321 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - InsurGuard AI</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            min-height: 100vh;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - InsurGuard AI</title>
 
-        .login-container {
-            width: 100%;
-            max-width: 450px;
-            padding: 40px;
-        }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-        .login-card {
-            background: linear-gradient(135deg, rgba(100, 200, 255, 0.05) 0%, rgba(0, 255, 136, 0.05) 100%);
-            border: 2px solid rgba(100, 200, 255, 0.3);
-            border-radius: 18px;
-            padding: 50px 40px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(100, 200, 255, 0.1);
-        }
+<style>
+body {
+    background: radial-gradient(circle at top, #1a1f3a, #0a0e27);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+/* Glass Card */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    animation: fadeIn 0.8s ease;
+}
 
-        .logo {
-            font-size: 3.5rem;
-            background: linear-gradient(135deg, #64c8ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-        }
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1; transform: translateY(0);}
+}
 
-        .login-title {
-            font-size: 2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #64c8ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
+.logo {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #00ff88;
+}
 
-        .login-subtitle {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 0;
-        }
+.login-title {
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.8rem;
+}
 
-        .form-group {
-            margin-bottom: 25px;
-        }
+.login-subtitle {
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-bottom: 30px;
+}
 
-        .form-label {
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 600;
-            margin-bottom: 10px;
-            display: block;
-        }
+/* Input */
+.form-control {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+}
 
-        .form-control {
-            background: rgba(20, 30, 60, 0.8);
-            border: 2px solid rgba(100, 200, 255, 0.3);
-            color: white;
-            border-radius: 10px;
-            padding: 14px 16px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
+.form-control:focus {
+    border-color: #00ff88;
+    box-shadow: 0 0 10px rgba(0,255,136,0.3);
+}
 
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
+/* Button */
+.btn-login {
+    width: 100%;
+    background: linear-gradient(135deg, #00ff88, #64c8ff);
+    border: none;
+    padding: 12px;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: 0.3s;
+}
 
-        .form-control:focus {
-            background: rgba(50, 80, 120, 0.9);
-            border-color: #64c8ff;
-            box-shadow: 0 0 20px rgba(100, 200, 255, 0.3);
-            color: white;
-            outline: none;
-        }
+.btn-login:hover {
+    transform: translateY(-2px);
+}
 
-        .role-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
+/* Loader */
+.spinner {
+    display: none;
+    margin-left: 8px;
+}
 
-        .role-option {
-            position: relative;
-        }
+/* Role */
+.role-selector {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
 
-        .role-option input[type="radio"] {
-            display: none;
-        }
+.role-option input {
+    display: none;
+}
 
-        .role-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 16px;
-            border: 2px solid rgba(100, 200, 255, 0.3);
-            border-radius: 10px;
-            background: rgba(100, 200, 255, 0.05);
-            color: rgba(255, 255, 255, 0.7);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
+.role-label {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+}
 
-        .role-option input[type="radio"]:checked + .role-label {
-            background: linear-gradient(135deg, rgba(100, 200, 255, 0.3), rgba(0, 255, 136, 0.2));
-            border-color: #64c8ff;
-            color: white;
-            box-shadow: 0 0 20px rgba(100, 200, 255, 0.3);
-        }
+.role-option input:checked + .role-label {
+    background: rgba(0,255,136,0.2);
+    border-color: #00ff88;
+}
 
-        .role-label i {
-            font-size: 1.2rem;
-        }
-
-        .btn-login {
-            background: linear-gradient(135deg, #64c8ff, #00ff88);
-            color: #0a0e27;
-            border: none;
-            padding: 14px;
-            font-weight: 700;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            font-size: 1.05rem;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(100, 200, 255, 0.4);
-            color: #0a0e27;
-        }
-
-        .btn-login:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .demo-credentials {
-            background: rgba(100, 200, 255, 0.08);
-            border: 1px solid rgba(100, 200, 255, 0.2);
-            border-radius: 10px;
-            padding: 18px;
-            margin-top: 30px;
-            font-size: 0.9rem;
-        }
-
-        .demo-credentials h6 {
-            font-weight: 700;
-            color: #64c8ff;
-            margin-bottom: 12px;
-            font-size: 0.95rem;
-        }
-
-        .demo-credentials p {
-            margin: 8px 0;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .demo-credentials code {
-            background: rgba(0, 0, 0, 0.3);
-            color: #00ff88;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-        }
-
-        .alert {
-            border-radius: 10px;
-            border: none;
-            margin-bottom: 25px;
-        }
-
-        .alert-danger {
-            background: rgba(255, 107, 107, 0.15);
-            color: #ff6b6b;
-        }
-
-        .alert-info {
-            background: rgba(100, 200, 255, 0.15);
-            color: #64c8ff;
-        }
-
-        .footer-text {
-            text-align: center;
-            margin-top: 30px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.9rem;
-        }
-
-        .security-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 25px;
-            padding: 12px;
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            border-radius: 8px;
-            color: #00ff88;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .security-badge i {
-            font-size: 1.1rem;
-        }
-    </style>
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    opacity: 0.6;
+}
+</style>
 </head>
+
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="logo">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h1 class="login-title">InsurGuard AI</h1>
-                <p class="login-subtitle">AI-Powered Health Insurance Risk Assessment</p>
-            </div>
 
-            {% if error %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle"></i> {{ error }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            {% endif %}
+<div class="login-card">
 
-            <form method="POST" action="/login">
-                <!-- Username Field -->
-                <div class="form-group">
-                    <label for="username" class="form-label">
-                        <i class="fas fa-user"></i> Username
-                    </label>
-                    <input type="text" class="form-control" id="username" name="username" 
-                           placeholder="Enter username" required>
-                </div>
-
-                <!-- Password Field -->
-                <div class="form-group">
-                    <label for="password" class="form-label">
-                        <i class="fas fa-lock"></i> Password
-                    </label>
-                    <input type="password" class="form-control" id="password" name="password" 
-                           placeholder="Enter password" required>
-                </div>
-
-                <!-- Role Selection -->
-                <label class="form-label" style="margin-bottom: 15px;">
-                    <i class="fas fa-user-tag"></i> Select Role
-                </label>
-                <div class="role-selector">
-                    <div class="role-option">
-                        <input type="radio" id="role_user" name="role" value="user" checked>
-                        <label for="role_user" class="role-label">
-                            <i class="fas fa-user"></i> User
-                        </label>
-                    </div>
-                    <div class="role-option">
-                        <input type="radio" id="role_admin" name="role" value="admin">
-                        <label for="role_admin" class="role-label">
-                            <i class="fas fa-crown"></i> Admin
-                        </label>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-            </form>
-
-            <!-- Demo Credentials -->
-            <div class="demo-credentials">
-                <h6><i class="fas fa-info-circle"></i> Demo Credentials</h6>
-                <p><strong>User Login:</strong><br>
-                   Username: <code>user</code><br>
-                   Password: <code>user123</code></p>
-                <p><strong>Admin Login:</strong><br>
-                   Username: <code>admin</code><br>
-                   Password: <code>admin123</code></p>
-            </div>
-
-            <div class="security-badge">
-                <i class="fas fa-lock"></i> Secure Session with RSA-2048 Encryption
-            </div>
-
-            <div class="footer-text">
-                <i class="fas fa-shield-alt"></i> Your data is protected with enterprise-grade security
-            </div>
-        </div>
+    <div class="logo">
+        <i class="fas fa-shield-alt"></i>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="login-title">InsurGuard AI</div>
+    <div class="login-subtitle">Secure AI Risk Assessment Platform</div>
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/login" id="loginForm">
+
+        <input type="text" name="username" class="form-control mb-3" placeholder="Username" required>
+
+        <input type="password" name="password" class="form-control mb-3" placeholder="Password" required>
+
+        <div class="role-selector">
+            <div class="role-option">
+                <input type="radio" name="role" value="user" checked id="user">
+                <label for="user" class="role-label">User</label>
+            </div>
+            <div class="role-option">
+                <input type="radio" name="role" value="admin" id="admin">
+                <label for="admin" class="role-label">Admin</label>
+            </div>
+        </div>
+
+        <button class="btn-login" id="loginBtn">
+            Login
+            <span class="spinner spinner-border spinner-border-sm"></span>
+        </button>
+
+    </form>
+
+    <div class="mt-4 small text-center">
+        <b>Demo:</b> user / user123 <br>
+        <b>Admin:</b> admin / admin123
+    </div>
+
+    <div class="footer">
+        🔒 RSA-2048 Encryption | AI Powered
+    </div>
+
+</div>
+
+<script>
+const form = document.getElementById("loginForm");
+const btn = document.getElementById("loginBtn");
+const spinner = document.querySelector(".spinner");
+
+form.addEventListener("submit", () => {
+    btn.disabled = true;
+    spinner.style.display = "inline-block";
+});
+</script>
+
 </body>
 </html>

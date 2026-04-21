@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-dark text-white">
+
+<div class="container mt-5">
+    <h2>👑 Admin Dashboard</h2>
+    <p>Welcome Admin: {{ session.username }}</p>
+
+    <a href="/dashboard" class="btn btn-primary">Analytics Dashboard</a>
+    <a href="/security-vault" class="btn btn-warning">Security Vault</a>
+    <a href="/logout" class="btn btn-danger">Logout</a>
+</div>
+
+</body>
+</html>

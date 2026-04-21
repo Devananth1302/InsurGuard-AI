@@ -564,158 +564,159 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const form = document.getElementById('assessmentForm');
-        const resultsContainer = document.getElementById('resultsContainer');
-        const loadingState = document.getElementById('loadingState');
-        const submitBtn = document.getElementById('submitBtn');
-        const encryptionOverlay = document.getElementById('encryptionOverlay');
-        const securityMatrix = document.getElementById('securityMatrix');
+    const form = document.getElementById('assessmentForm');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const loadingState = document.getElementById('loadingState');
+    const submitBtn = document.getElementById('submitBtn');
+    const encryptionOverlay = document.getElementById('encryptionOverlay');
+    const securityMatrix = document.getElementById('securityMatrix');
 
-        // BMI Calculation
-        function calculateBMI() {
-            const height = parseFloat(document.getElementById('height').value);
-            const weight = parseFloat(document.getElementById('weight').value);
-            const bmiField = document.getElementById('bmi');
-            
-            if (height && weight && height > 0) {
-                const heightInMeters = height / 100;
-                const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
-                bmiField.value = bmi;
-            } else {
-                bmiField.value = '';
-            }
+    // BMI Calculation
+    function calculateBMI() {
+        const height = parseFloat(document.getElementById('height').value);
+        const weight = parseFloat(document.getElementById('weight').value);
+        const bmiField = document.getElementById('bmi');
+        
+        if (height && weight && height > 0) {
+            const heightInMeters = height / 100;
+            const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+            bmiField.value = bmi;
+        } else {
+            bmiField.value = '';
         }
+    }
 
-        // Add event listeners for BMI calculation
-        document.getElementById('height').addEventListener('input', calculateBMI);
-        document.getElementById('weight').addEventListener('input', calculateBMI);
+    document.getElementById('height').addEventListener('input', calculateBMI);
+    document.getElementById('weight').addEventListener('input', calculateBMI);
 
-        // Security Matrix Animation
-        function showSecurityMatrix() {
-            securityMatrix.classList.add('active');
-            const cols = Math.ceil(window.innerWidth / 40);
-            const rows = Math.ceil(window.innerHeight / 40);
+    // Security Matrix Animation
+    function showSecurityMatrix() {
+        securityMatrix.classList.add('active');
+        const cols = Math.ceil(window.innerWidth / 40);
+        const rows = Math.ceil(window.innerHeight / 40);
 
-            for (let i = 0; i < cols * rows; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'matrix-cell';
-                cell.style.left = (i % cols) * 40 + 'px';
-                cell.style.top = Math.floor(i / cols) * 40 + 'px';
-                cell.textContent = Math.random() > 0.5 ? '1' : '0';
-                securityMatrix.appendChild(cell);
-
-                setTimeout(() => {
-                    cell.classList.add('active');
-                }, Math.random() * 2000);
-            }
+        for (let i = 0; i < cols * rows; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'matrix-cell';
+            cell.style.left = (i % cols) * 40 + 'px';
+            cell.style.top = Math.floor(i / cols) * 40 + 'px';
+            cell.textContent = Math.random() > 0.5 ? '1' : '0';
+            securityMatrix.appendChild(cell);
 
             setTimeout(() => {
-                securityMatrix.classList.remove('active');
-                securityMatrix.innerHTML = '';
-            }, 2500);
+                cell.classList.add('active');
+            }, Math.random() * 2000);
         }
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        setTimeout(() => {
+            securityMatrix.classList.remove('active');
+            securityMatrix.innerHTML = '';
+        }, 2500);
+    }
 
-            // Show security effects
-            showSecurityMatrix();
-            encryptionOverlay.classList.add('active');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
 
-            const formData = {
-                age: document.getElementById('age').value,
-                sex: document.getElementById('sex').value,
-                bmi: document.getElementById('bmi').value,
-                smoker: document.getElementById('smoker').value,
-                children: document.getElementById('children').value,
-                region: document.getElementById('region').value
-            };
+        showSecurityMatrix();
+        encryptionOverlay.classList.add('active');
 
-            try {
-                const response = await fetch('/api/assessment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
+        const formData = {
+            age: document.getElementById('age').value,
+            sex: document.getElementById('sex').value,
+            bmi: document.getElementById('bmi').value,
+            smoker: document.getElementById('smoker').value,
+            children: document.getElementById('children').value,
+            region: document.getElementById('region').value
+        };
 
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
-                }
+        try {
+            const response = await fetch('/api/assessment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
 
-                const data = await response.json();
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
 
-                // Hide overlay after delay
-                setTimeout(() => {
-                    encryptionOverlay.classList.remove('active');
-                    displayResults(data);
-                }, 2500);
+            const data = await response.json();
 
-            } catch (error) {
-                console.error('Error:', error);
+            setTimeout(() => {
                 encryptionOverlay.classList.remove('active');
-                alert('Error: ' + error.message);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-bolt"></i> Analyze Risk Profile';
-            }
-        });
+                displayResults(data);
+            }, 2000);
 
-        function displayResults(data) {
-            loadingState.style.display = 'none';
-            resultsContainer.classList.add('show');
-
-            // Display assessment results
-            document.getElementById('resultCost').textContent = 
-                '$' + data.assessment.predicted_charge.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            
-            const riskLevel = data.assessment.risk_level;
-            const riskLevelEl = document.getElementById('resultRiskLevel');
-            riskLevelEl.textContent = riskLevel;
-            riskLevelEl.className = `risk-level-${riskLevel.toLowerCase()}`;
-
-            // RL Optimization
-            document.getElementById('beforeRL').textContent = 
-                '$' + data.rl_optimization.original_premium.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('afterRL').textContent = 
-                '$' + data.rl_optimization.optimized_premium.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
-            const savings = data.assessment.savings;
-            if (savings > 0) {
-                document.getElementById('savingsBadge').innerHTML = 
-                    `<div class="savings-badge"><i class="fas fa-piggy-bank"></i> Save $${savings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>`;
-            } else {
-                document.getElementById('savingsBadge').innerHTML = '';
-            }
-
-            document.getElementById('rlAction').textContent = 
-                `RL Agent Action: ${data.rl_optimization.action} (${data.rl_optimization.policy_change})`;
-
-            // Risk Factors
-            const factorsList = document.getElementById('riskFactorsList');
-            if (data.risk_factors && data.risk_factors.length > 0) {
-                factorsList.innerHTML = data.risk_factors.map(factor => {
-                    const factorName = typeof factor === 'string' ? factor : (factor.factor || factor);
-                    const influence = typeof factor === 'object' ? (factor.influence * 100).toFixed(1) : '100';
-                    return `
-                        <div class="risk-factor-item">
-                            <span class="risk-factor-name">${factorName}</span>
-                            <span class="risk-factor-score">${influence}%</span>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                factorsList.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.5);">Risk factors calculated</div>';
-            }
-
-            // Security Hash
-            document.getElementById('hashValue').textContent = data.security.charge_hash || 'Verified';
-
+        } catch (error) {
+            console.error('Error:', error);
+            encryptionOverlay.classList.remove('active');
+            alert('Error: ' + error.message);
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fas fa-bolt"></i> Analyze Risk Profile';
         }
-    </script>
+    });
+
+    function displayResults(data) {
+        loadingState.style.display = 'none';
+        resultsContainer.classList.add('show');
+
+        // ===== Predicted Cost =====
+        document.getElementById('resultCost').textContent =
+            '$' + data.predicted_charge.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+        // ===== Risk Level =====
+        const riskLevelEl = document.getElementById('resultRiskLevel');
+        riskLevelEl.textContent = data.risk;
+        riskLevelEl.className = `risk-level-${data.risk.toLowerCase()}`;
+
+        // ===== RL Optimization =====
+        document.getElementById('beforeRL').textContent =
+            '$' + data.predicted_charge.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+        document.getElementById('afterRL').textContent =
+            '$' + data.adjusted_charge.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+        // ===== Savings =====
+        const savings = data.predicted_charge - data.adjusted_charge;
+
+        if (savings > 0) {
+            document.getElementById('savingsBadge').innerHTML =
+                `<div class="savings-badge">
+                    <i class="fas fa-piggy-bank"></i> Save $${savings.toFixed(2)}
+                 </div>`;
+        } else {
+            document.getElementById('savingsBadge').innerHTML = '';
+        }
+
+        // ===== RL Action =====
+        document.getElementById('rlAction').textContent =
+            `RL Action: ${data.adjustment} (factor: ${data.factor})`;
+
+        // ===== Risk Factors (not returned by backend) =====
+        document.getElementById('riskFactorsList').innerHTML =
+            `<div style="text-align:center; color:rgba(255,255,255,0.5)">
+                Not available in current model
+             </div>`;
+
+        // ===== Security Hash =====
+        document.getElementById('hashValue').textContent = data.hash;
+
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-bolt"></i> Analyze Risk Profile';
+    }
+</script>
 </body>
 </html>
